@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class PatientFilter extends StatelessWidget {
-  const PatientFilter({Key? key}) : super(key: key);
+  final Function(String query) filterPatients;
+  const PatientFilter(this.filterPatients, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +35,16 @@ class PatientFilter extends StatelessWidget {
                     labelText: 'Search...',
                     labelStyle: Theme.of(context).textTheme.headline2,
                     floatingLabelBehavior: FloatingLabelBehavior.never,
-                    suffixIcon: const Icon(
-                      Icons.person_search,
-                      color: Colors.black54,
+                    suffixIcon: GestureDetector(
+                      child: const Icon(
+                        Icons.person_search,
+                        color: Colors.black54,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey.shade400)),
                   ),
+                  onChanged: (String query) => filterPatients(query),
                 ),
               ),
             ],

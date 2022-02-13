@@ -24,23 +24,14 @@ class Patients extends StatefulWidget {
 }
 
 class _PatientsState extends State<Patients> {
-  List<Patient> patients = [
-    Patient(
-        id: null,
-        birthDate: null,
-        address: null,
-        fullName: null,
-        imageUrl: null,
-        email: null,
-        gender: null,
-        phone: null,
-        nationality: null)
-  ];
   late Info info;
-
   final int pageSize = 50;
+  int currentPageKey = 0;
   final PagingController<int, Patient> pagingController =
       PagingController(firstPageKey: 0);
+
+  List<Patient> filteredPatients = [];
+  bool filtering = false;
 
   @override
   void initState() {
@@ -83,8 +74,8 @@ class _PatientsState extends State<Patients> {
         if (isLastPage) {
           pagingController.appendLastPage(newPatients);
         } else {
-          final nextPageKey = pageKey + 1;
-          pagingController.appendPage(newPatients, nextPageKey);
+          currentPageKey = pageKey + 1;
+          pagingController.appendPage(newPatients, currentPageKey);
         }
       } else if (response.statusCode != 200 && map['error']) {
         ModalService.showModalMessage(
@@ -105,6 +96,25 @@ class _PatientsState extends State<Patients> {
     }
   }
 
+  void filterPatients(String query) {
+    if (query.isNotEmpty && pagingController.itemList != null) {
+      filteredPatients = pagingController.itemList!
+          .where((Patient patient) =>
+              patient.fullName!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+
+      setState(() {
+        filteredPatients;
+        filtering = true;
+      });
+    } else {
+      setState(() {
+        filteredPatients;
+        filtering = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,18 +132,28 @@ class _PatientsState extends State<Patients> {
           padding: const EdgeInsets.only(top: 15),
           child: Column(
             children: [
-              const PatientFilter(),
+              PatientFilter(filterPatients),
               Expanded(
                 flex: 1,
-                child: PagedListView<int, Patient>(
-                  pagingController: pagingController,
-                  builderDelegate: PagedChildBuilderDelegate<Patient>(
-                    itemBuilder: (context, item, index) => PatientItem(item),
-                    firstPageProgressIndicatorBuilder: (context) => Container(),
-                    newPageErrorIndicatorBuilder: (context) => Container(),
-                    firstPageErrorIndicatorBuilder: (context) => Container(),
-                  ),
-                ),
+                child: !filtering
+                    ? PagedListView<int, Patient>(
+                        pagingController: pagingController,
+                        builderDelegate: PagedChildBuilderDelegate<Patient>(
+                          itemBuilder: (context, item, index) =>
+                              PatientItem(item),
+                          firstPageProgressIndicatorBuilder: (context) =>
+                              Container(),
+                          newPageErrorIndicatorBuilder: (context) =>
+                              Container(),
+                          firstPageErrorIndicatorBuilder: (context) =>
+                              Container(),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: filteredPatients.length,
+                        itemBuilder: (context, index) =>
+                            PatientItem(filteredPatients[index]),
+                      ),
               ),
               const HomeButton(),
             ],
