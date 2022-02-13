@@ -58,8 +58,16 @@ class _PatientsState extends State<Patients> {
         : false;
 
     try {
-      Response response =
-          await UserService.getPatients(pageKey, pageSize, null, null);
+      String nationalityString = ['us', 'br', 'no'].toString();
+      String nationalityQuery = nationalityString
+          .substring(1, nationalityString.length - 1)
+          .replaceAll(' ', '');
+      String gender = 'female';
+
+      log(nationalityQuery);
+
+      Response response = await UserService.getPatients(
+          pageKey, pageSize, nationalityQuery, gender);
       context.loaderOverlay.hide();
 
       Map<String, dynamic> map = json.decode(response.body);

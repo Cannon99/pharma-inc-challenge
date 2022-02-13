@@ -3,10 +3,10 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
 class UserService {
-  static Future<Response> getPatients(int? pageKey, int? pageSize,
-      List<String>? nationality, String? gender) async {
+  static Future<Response> getPatients(
+      int? pageKey, int? pageSize, String nationalities, String? gender) async {
     Uri url = Uri.parse(
-        '${AppConstants.baseUrl}/?page=$pageKey&results=$pageSize&nationalty=$nationality&gender=$gender');
+        '${AppConstants.baseUrl}/?page=$pageKey&results=$pageSize&nationality=$nationalities&gender=$gender');
 
     return await http.get(
       url,
