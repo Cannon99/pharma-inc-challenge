@@ -1,6 +1,6 @@
 class UserId {
-  String name;
-  String value;
+  String? name;
+  String? value;
 
   UserId({
     required this.name,

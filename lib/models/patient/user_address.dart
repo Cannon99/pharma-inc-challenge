@@ -1,9 +1,9 @@
 class UserAddress {
-  String streetName;
-  String streetNumber;
-  String city;
-  String state;
-  String country;
+  String? streetName;
+  String? streetNumber;
+  String? city;
+  String? state;
+  String? country;
 
   UserAddress({
     required this.streetName,
@@ -20,5 +20,9 @@ class UserAddress {
         city: json['city'],
         state: json['state'],
         country: json['country']);
+  }
+
+  String getFullAddress() {
+    return '$streetName, $streetNumber - $city/$state ($country)';
   }
 }

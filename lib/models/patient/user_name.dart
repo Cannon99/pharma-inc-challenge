@@ -1,9 +1,7 @@
-// ignore_for_file: unnecessary_brace_in_string_interps
-
 class UserName {
-  String title;
-  String first;
-  String last;
+  String? title;
+  String? first;
+  String? last;
 
   UserName({required this.title, required this.first, required this.last});
 
@@ -13,6 +11,6 @@ class UserName {
   }
 
   String getUserFullName() {
-    return '${title} ${first} ${last}';
+    return '$title $first $last';
   }
 }

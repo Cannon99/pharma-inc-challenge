@@ -18,6 +18,7 @@ class PatientFilter extends StatelessWidget {
                   style: Theme.of(context).textTheme.headline1,
                   cursorColor: Theme.of(context).colorScheme.primary,
                   keyboardType: TextInputType.text,
+                  onTap: () => FocusScope.of(context).unfocus(),
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.all(12),
                     border: OutlineInputBorder(
@@ -28,13 +29,15 @@ class PatientFilter extends StatelessWidget {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    labelText: 'Pesquisando...',
+                    labelText: 'Search...',
                     labelStyle: Theme.of(context).textTheme.headline2,
                     floatingLabelBehavior: FloatingLabelBehavior.never,
                     suffixIcon: const Icon(
                       Icons.person_search,
                       color: Colors.black54,
                     ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey.shade400)),
                   ),
                 ),
               ),
@@ -46,7 +49,7 @@ class PatientFilter extends StatelessWidget {
                 child: Icon(
                   Icons.filter_alt,
                   size: 45,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
                 onTap: () {},
               ),
@@ -57,16 +60,3 @@ class PatientFilter extends StatelessWidget {
     );
   }
 }
-
-/*
-Container(
-                width: MediaQuery.of(context).size.width * 0.7,
-                height: 35,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
-*/ 

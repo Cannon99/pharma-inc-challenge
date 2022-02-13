@@ -1,9 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:challenge/components/general/close_icon.dart';
+import 'package:challenge/models/patient/patient.dart';
+import 'package:challenge/pipes/pipes.dart';
 import 'package:challenge/services_app/modal_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PatientItem extends StatelessWidget {
-  const PatientItem({Key? key}) : super(key: key);
+  final Patient patient;
+
+  const PatientItem(this.patient, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +25,9 @@ class PatientItem extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(
             width: 1,
-            color: Colors.grey,
+            color: Colors.grey.shade400,
           ),
+          borderRadius: BorderRadius.circular(5),
         ),
         height: MediaQuery.of(context).size.height * 0.16,
         child: LayoutBuilder(
@@ -29,11 +36,13 @@ class PatientItem extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: Colors.grey.shade300,
                 radius: MediaQuery.of(context).size.height * 0.08,
-                child: const Icon(
-                  Icons.person,
-                  size: 35,
-                  color: Colors.grey,
-                ),
+                child: patient.imageUrl != null
+                    ? ClipOval(
+                        child: Image.network(
+                          patient.imageUrl!,
+                        ),
+                      )
+                    : const Icon(Icons.person, size: 30, color: Colors.grey),
               ),
               Container(
                 width: constraints.maxWidth * 0.025,
@@ -50,28 +59,40 @@ class PatientItem extends StatelessWidget {
                           top: 10,
                           bottom: 5,
                         ),
-                        child: Expanded(
-                          child: AutoSizeText(
-                            'Matheus Alves Furlan',
-                            maxLines: 3,
-                            minFontSize: 14,
-                            style: Theme.of(context).textTheme.headline4,
-                          ),
-                        ),
+                        child: patient.fullName != null
+                            ? Expanded(
+                                child: AutoSizeText(
+                                  patient.fullName!,
+                                  maxLines: 3,
+                                  minFontSize: 14,
+                                  style: Theme.of(context).textTheme.headline4,
+                                ),
+                              )
+                            : const CloseIcon(),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Masculino',
-                              style: Theme.of(context).textTheme.headline3,
-                            ),
-                            Text(
-                              '11/02/2022',
-                              style: Theme.of(context).textTheme.headline3,
-                            ),
+                            patient.gender != null
+                                ? Text(
+                                    Pipes.textCase(patient.gender!),
+                                    style:
+                                        Theme.of(context).textTheme.headline3,
+                                  )
+                                : const CloseIcon(),
+                            patient.birthDate != null
+                                ? Text(
+                                    DateFormat('dd/MM/yyyy').format(
+                                      DateTime.parse(
+                                        (patient.birthDate!.date!),
+                                      ),
+                                    ),
+                                    style:
+                                        Theme.of(context).textTheme.headline3,
+                                  )
+                                : const CloseIcon()
                           ],
                         ),
                       )
@@ -83,7 +104,7 @@ class PatientItem extends StatelessWidget {
           ),
         ),
       ),
-      onTap: () => ModalService.showModalPatientDetails(context),
+      onTap: () => ModalService.showModalPatientDetails(context, patient),
     );
   }
 }
