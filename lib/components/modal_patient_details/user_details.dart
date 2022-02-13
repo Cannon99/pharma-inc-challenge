@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:challenge/components/general/close_icon.dart';
 import 'package:challenge/models/patient/patient.dart';
+import 'package:challenge/pipes/pipes.dart';
 import 'package:challenge/utils/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -110,7 +111,7 @@ class UserDetails extends StatelessWidget {
               patient.gender != null
                   ? Expanded(
                       child: Text(
-                        patient.gender!,
+                        Pipes.textCase(patient.gender!),
                         style: Theme.of(context).textTheme.headline1,
                       ),
                     )

@@ -49,7 +49,7 @@ class PatientFilter extends StatelessWidget {
                 child: Icon(
                   Icons.filter_alt,
                   size: 45,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 onTap: () {},
               ),

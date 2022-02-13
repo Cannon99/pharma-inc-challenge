@@ -20,10 +20,10 @@ class MyApp extends StatelessWidget {
         title: 'Challenge Pharma INC',
         theme: ThemeData(
           colorScheme: ThemeData().colorScheme.copyWith(
-                primary: const Color(0xFF003461),
-                secondary: const Color(0xFF00AFAD),
-                primaryVariant: const Color(0xFF0083CA),
-              ),
+              primary: const Color(0xFF003461),
+              secondary: const Color(0xFF00AFAD),
+              primaryVariant: const Color(0xFF0083CA),
+              secondaryVariant: const Color(0xF0F26522)),
           textTheme: ThemeData.light().textTheme.copyWith(
                 headline1: const TextStyle(
                   fontSize: 16,

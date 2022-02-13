@@ -14,7 +14,7 @@ class HomeButton extends StatelessWidget {
             bottom: 5,
           ),
           width: double.infinity,
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.secondaryVariant,
           child: const Icon(
             Icons.home,
             color: Colors.white,
