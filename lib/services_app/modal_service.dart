@@ -1,4 +1,4 @@
-import 'package:challenge/components/general/modal_message.dart';
+import 'package:challenge/modals/modal_message.dart';
 import 'package:challenge/modals/modal_patient_details.dart';
 import 'package:challenge/models/patient/patient.dart';
 import 'package:flutter/material.dart';

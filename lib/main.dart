@@ -45,6 +45,12 @@ class MyApp extends StatelessWidget {
                   color: Colors.black54,
                   fontWeight: FontWeight.w700,
                 ),
+                headline5: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'RedHatMono',
+                ),
               ),
         ),
         home: const Home(),
@@ -56,3 +62,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+/*
+
+*/ 

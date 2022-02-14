@@ -10,6 +10,7 @@ import 'package:challenge/models/other/info.dart';
 import 'package:challenge/models/patient/patient.dart';
 
 import 'package:challenge/services_api/user_service.dart';
+import 'package:challenge/services_app/filter_options_service.dart';
 import 'package:challenge/services_app/modal_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -30,8 +31,8 @@ class _PatientsState extends State<Patients> {
   final PagingController<int, Patient> pagingController =
       PagingController(firstPageKey: 0);
 
-  List<Patient> filteredPatients = [];
-  bool filtering = false;
+  List<Patient> patients = [];
+  FilterOptionsService filterOptionsService = FilterOptionsService();
 
   @override
   void initState() {
@@ -58,16 +59,13 @@ class _PatientsState extends State<Patients> {
         : false;
 
     try {
-      String nationalityString = ['us', 'br', 'no'].toString();
-      String nationalityQuery = nationalityString
-          .substring(1, nationalityString.length - 1)
-          .replaceAll(' ', '');
-      String gender = 'female';
-
-      log(nationalityQuery);
+      String selectedGender = filterOptionsService.getSelectedGender;
 
       Response response = await UserService.getPatients(
-          pageKey, pageSize, nationalityQuery, gender);
+          pageKey,
+          pageSize,
+          getNationalitiesQuery(),
+          selectedGender == 'both' ? null : selectedGender);
       context.loaderOverlay.hide();
 
       Map<String, dynamic> map = json.decode(response.body);
@@ -77,6 +75,7 @@ class _PatientsState extends State<Patients> {
             .map((dynamic element) => Patient.fromJson(element))
             .toList();
         info = Info.fromJson(map['info']);
+        patients.addAll(newPatients);
 
         bool isLastPage = newPatients.length < pageSize;
         if (isLastPage) {
@@ -85,41 +84,58 @@ class _PatientsState extends State<Patients> {
           currentPageKey = pageKey + 1;
           pagingController.appendPage(newPatients, currentPageKey);
         }
-      } else if (response.statusCode != 200 && map['error']) {
-        ModalService.showModalMessage(
-            context,
-            'Search error',
-            map['error']
-                ? map['error']
-                : 'It was not possible to load the patients list');
+
+        filterPatients(filterOptionsService.getLastNameQuery);
+      } else if (response.statusCode != 200 && map['error'] != null) {
+        ModalService.showModalMessage(context, 'Search error', map['error']);
       }
     } catch (error) {
       context.loaderOverlay.hide();
       pagingController.error = error;
       ModalService.showModalMessage(
         context,
-        'Search error 44',
+        'Search error',
         'It was not possible to load the patients list: ${error.toString()}',
       );
     }
   }
 
   void filterPatients(String query) {
-    if (query.isNotEmpty && pagingController.itemList != null) {
-      filteredPatients = pagingController.itemList!
-          .where((Patient patient) =>
-              patient.fullName!.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+    pagingController.itemList =
+        filterOptionsService.filterPatients(query, patients);
+  }
 
-      setState(() {
-        filteredPatients;
-        filtering = true;
-      });
+  void filterFromPopover(String query) {
+    pagingController.itemList =
+        filterOptionsService.filterPatients(query, patients);
+
+    if (pagingController.itemList!.isEmpty && query.isEmpty) {
+      getPatients(currentPageKey);
+    }
+  }
+
+  String getNationalitiesQuery() {
+    List<MapEntry<String, bool>> flaggedNationalitites = filterOptionsService
+        .getNationalityOptions.entries
+        .where(
+            (MapEntry<String, bool> nationality) => nationality.value == true)
+        .toList();
+
+    if (flaggedNationalitites.isEmpty) {
+      return '';
     } else {
-      setState(() {
-        filteredPatients;
-        filtering = false;
-      });
+      String nationalitiesString = filterOptionsService
+          .getNationalityOptions.entries
+          .where((element) => element.value == true)
+          .toList()
+          .map((MapEntry<String, bool> nationality) =>
+              nationality.key.toLowerCase())
+          .toList()
+          .toString();
+
+      return nationalitiesString
+          .substring(1, nationalitiesString.length - 1)
+          .replaceAll(' ', '');
     }
   }
 
@@ -140,28 +156,18 @@ class _PatientsState extends State<Patients> {
           padding: const EdgeInsets.only(top: 15),
           child: Column(
             children: [
-              PatientFilter(filterPatients),
+              PatientFilter(
+                  filterPatients, filterFromPopover, filterOptionsService),
               Expanded(
-                flex: 1,
-                child: !filtering
-                    ? PagedListView<int, Patient>(
-                        pagingController: pagingController,
-                        builderDelegate: PagedChildBuilderDelegate<Patient>(
-                          itemBuilder: (context, item, index) =>
-                              PatientItem(item),
-                          firstPageProgressIndicatorBuilder: (context) =>
-                              Container(),
-                          newPageErrorIndicatorBuilder: (context) =>
-                              Container(),
-                          firstPageErrorIndicatorBuilder: (context) =>
-                              Container(),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: filteredPatients.length,
-                        itemBuilder: (context, index) =>
-                            PatientItem(filteredPatients[index]),
-                      ),
+                child: PagedListView<int, Patient>(
+                  pagingController: pagingController,
+                  builderDelegate: PagedChildBuilderDelegate<Patient>(
+                    itemBuilder: (context, item, index) => PatientItem(item),
+                    firstPageProgressIndicatorBuilder: (context) => Container(),
+                    newPageErrorIndicatorBuilder: (context) => Container(),
+                    firstPageErrorIndicatorBuilder: (context) => Container(),
+                  ),
+                ),
               ),
               const HomeButton(),
             ],
