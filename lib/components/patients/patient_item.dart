@@ -15,7 +15,7 @@ class PatientItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         child: Container(
-          margin: const EdgeInsets.only(bottom: 10),
+          margin: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
           padding: const EdgeInsets.only(
             left: 0,
             top: 10,
@@ -23,10 +23,18 @@ class PatientItem extends StatelessWidget {
             bottom: 10,
           ),
           decoration: BoxDecoration(
-            border: Border.all(
-              width: 1,
-              color: Colors.grey.shade400,
-            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.grey,
+                blurRadius: 5.0,
+                spreadRadius: 0.0,
+                offset: Offset(
+                  3.0,
+                  5.0,
+                ),
+              ),
+            ],
+            color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(5),
           ),
           height: MediaQuery.of(context).size.height * 0.16,
