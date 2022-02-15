@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:challenge/components/general/loader.dart';
 import 'package:challenge/components/patients/home_button.dart';

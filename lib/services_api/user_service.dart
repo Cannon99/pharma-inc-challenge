@@ -13,7 +13,8 @@ class UserService {
     return await http.get(
       url,
       headers: <String, String>{
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8',
+        'Charset': 'utf-8'
       },
     );
   }
